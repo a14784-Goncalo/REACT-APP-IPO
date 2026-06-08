@@ -44,14 +44,64 @@ function Inicio() {
 
 function ClientesList() {
   return (
-    <h2>
-      Página de Clientes
-      <button className="btn btn-primary">
-        <i className="fa fa-plus"></i>
-        Novo Cliente
-      </button>
-    </h2>
+    <div>
+      <div>
+        <h2 className="float-left">Clientes</h2>
+        <button className="btn btn-light float-right mr-2"><i className="fa fa-refresh"></i>
+          Atualizar
+        </button>
+        <button className="btn btn-dark float-right mr-2"><i className="fa fa-plus-square"></i>
+          Novo Cliente
+        </button>
+      </div>
 
+      <div class="container">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Morada</th>
+              <th>Nif</th>
+              <th>Opções</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Júlio Pinho</td>
+              <td>Lisboa</td>
+              <td>1853713571</td>
+              <td><button className="btn btn-dark mr-2"><i className="fa fa-eye"></i></button>
+                <button className="btn btn-dark mr-2"><i className="fa fa-pencil"></i></button>
+                <button className="btn btn-dark"><i className="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Barros Silva</td>
+              <td>Madeira</td>
+              <td>1577532871</td>
+              <td><button className="btn btn-dark mr-2"><i className="fa fa-eye"></i></button>
+                <button className="btn btn-dark mr-2"><i className="fa fa-pencil"></i></button>
+                <button className="btn btn-dark"><i className="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Maria Juhana</td>
+              <td>Leiria</td>
+              <td>7512383122</td>
+              <td><button className="btn btn-dark mr-2"><i className="fa fa-eye"></i></button>
+                <button className="btn btn-dark mr-2"><i className="fa fa-pencil"></i></button>
+                <button className="btn btn-dark"><i className="fa fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
   );
 }
 
