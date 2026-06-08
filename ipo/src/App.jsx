@@ -49,7 +49,6 @@ function ClientesList() {
       <button className="btn btn-primary">
         <i className="fa fa-plus"></i>
         Novo Cliente
-        
       </button>
     </h2>
 
