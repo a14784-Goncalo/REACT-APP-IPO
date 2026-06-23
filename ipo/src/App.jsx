@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 
-const API_BASE = 'https://effective-capybara-v665669654wghp5gj-3000.app.github.dev';
+const API_BASE = 'https://turbo-zebra-wrr4rrpr4wjrhg749-3000.app.github.dev';
 
 function App() {
   return (
@@ -331,33 +331,6 @@ function InspecoesList() {
     fetchData();
   }, []);
 
-  const openDeleteModal = (id) => {
-    setDeleteId(id);
-    setShowDeleteModal(true);
-  };
-
-  const closeDeleteModal = () => {
-    setDeleteId(null);
-    setShowDeleteModal(false);
-  };
-
-  const confirmDelete = async (id) => {
-    try {
-      const response = await fetch(API_BASE + '/inspecoes/' + id, { method: 'DELETE' });
-      const data = await response.json();
-      if (data.success) {
-        fetchData();
-      } else {
-        setMensagemErro(data.message);
-      }
-    } catch {
-      setMensagemErro('Erro ao eliminar inspecao');
-    }
-    finally {
-      closeDeleteModal();
-    }
-  };
-
   const fetchData = async () => {
     try {
       const response = await fetch(API_BASE + '/inspecoes');
@@ -376,7 +349,7 @@ function InspecoesList() {
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return <p>Carregando...</p>
 
   return
   (
@@ -411,48 +384,21 @@ function InspecoesList() {
         </thead>
         <tbody>
           {inspecoes.map(inspecao => (
-            <tr key={inspecao.codIns}>
-              <td>{inspecao.codveiculo}</td>
+            <tr key={inspecao.codinspecao}>
               <td>{inspecao.codmatricula}</td>
-              <td>{inspecao.datalivrete}</td>
-              <td>{inspecao.anofabrico}</td>
-              <td>{inspecao.cliente.nome}</td>
-              <td>{inspecao.marca.marca}</td>
+              <td>{inspecao.datainspecao}</td>
+              <td>{inspecao.numerofaltas}</td>
+              <td>{inspecao.aprovado}</td>
+
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
-                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(veiculo.codveiculo)}>
-                  <i className='fa fa-trash' aria-hidden='true'></i>
-                </button>
               </td>
+              
             </tr>
           ))}
         </tbody>
       </table>
-      {showDeleteModal && (
-        <>
-          <div className="modal-backdrop fade show"></div>
-          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Confirmação</h5>
-                  <button type="button" className="close" onClick={closeDeleteModal}>
-                    <span>&times;</span>
-                  </button>
-                </div>
-                <div className="modal-body">
-                  <p>Tem certeza que deseja eliminar este veiculo?</p>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={closeDeleteModal}>Cancelar</button>
-                  <button type="button" className="btn btn-danger" onClick={() => confirmDelete(deleteId)}>Confirmar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
     </>
   );
 }
