@@ -201,7 +201,7 @@ function ClienteForm() {
     e.preventDefault();
     try {
       const method = 'POST';
-      const url = `${API_BASE}/clientes.php`;
+      const url = `${API_BASE}/clientes`;
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -209,7 +209,7 @@ function ClienteForm() {
       });
       const data = await response.json();
       if (data.success) {
-        navigate('/clientes/create');
+        navigate('/clientes');
       } else {
         setMensagemErro(data.message);
       }
