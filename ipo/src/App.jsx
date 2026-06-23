@@ -15,6 +15,7 @@ function App() {
             <Link className="nav-link" to="/clientes">Clientes</Link>
             <Link className="nav-link" to="/veiculos">Veículos</Link>
             <Link className="nav-link" to="/inspecoes">Inspeções</Link>
+
           </div>
         </div>
 
@@ -23,6 +24,12 @@ function App() {
       <div className="container mt-4">
         <Routes>
           <Route path="/" element={<Inicio />} />
+
+          {/* Rotas do formulário de Clientes */}
+          <Route path="/clientes/create" element={<ClienteForm modo="create" />} />
+          <Route path="/clientes/update/:id" element={<ClienteForm modo="update" />} />
+          <Route path="/clientes/read/:id" element={<ClienteForm modo="read" />} />
+
           <Route path="/clientes" element={<ClientesList />} />
           <Route path="/veiculos" element={<VeiculosList />} />
           <Route path="/inspecoes" element={<InspecoesList />} />
@@ -111,7 +118,7 @@ function ClientesList() {
           <h2>Clientes</h2>
         </div>
         <div className="col-6 text-right">
-          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Novo Cliente</button>
+          <button className="btn btn-dark" onClick={() => navigate('/clientes/create')}>Novo cliente</button>
           <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
         </div>
       </div>
@@ -175,6 +182,93 @@ function ClientesList() {
           </div>
         </>
       )}
+    </>
+  );
+}
+
+function ClienteForm() {
+  const [formData, setFormData] = useState({
+    nome: "",
+    morada: "",
+    nif: ""
+  });
+
+  const [mensagemErro, setMensagemErro] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const method = 'POST';
+      const url = `${API_BASE}/clientes.php`;
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (data.success) {
+        navigate('/clientes/create');
+      } else {
+        setMensagemErro(data.message);
+      }
+    } catch {
+      setMensagemErro('Erro ao guardar o cliente');
+    }
+  };
+
+  return (
+    <>
+      <div className="container mt-4">
+        <h1>Novo Cliente</h1>
+
+        {mensagemErro && (
+          <div className="alert alert-danger alert-dismissible fade show" role="alert">
+            {mensagemErro}
+            <button type="button" className="close" onClick={() => setMensagemErro("")}>
+              <span>&times;</span>
+            </button>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Nome:</label>
+            <input type="text" className="form-control" value={formData.nome}
+              onChange={(e) =>
+                setFormData({ ...formData, nome: e.target.value })
+              } />
+          </div>
+
+          <div className="row">
+
+            <div className="form-group col-8">
+              <label>Morada</label>
+              <input type="text" className="form-control" value={formData.morada}
+                onChange={(e) => setFormData({ ...formData, morada: e.target.value })
+                } />
+            </div>
+
+            <div className="form-group col-4">
+              <label>NIF</label>
+              <input type="text" className="form-control" value={formData.nif}
+                onChange={(e) => setFormData({ ...formData, nif: e.target.value })
+                } />
+            </div>
+
+          </div>
+
+          <button type="submit" className="btn btn-dark mr-2">
+            Guardar
+          </button>
+
+          <button type="button" className="btn btn-secondary" onClick={() => navigate("/clientes")}>
+            Cancelar
+          </button>
+
+        </form>
+      </div>
     </>
   );
 }
@@ -317,8 +411,6 @@ function VeiculosList() {
     </>
   );
 }
-
-
 
 function InspecoesList() {
   const [inspecoes, setInspecoes] = useState([]);
