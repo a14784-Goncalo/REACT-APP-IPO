@@ -14,7 +14,7 @@ function App() {
           <div className="navbar-nav">
             <Link className="nav-link" to="/clientes">Clientes</Link>
             <Link className="nav-link" to="/veiculos">Veículos</Link>
-            <Link className="nav-link" to="/inspecoes">Inpeções</Link>
+            <Link className="nav-link" to="/inspecoes">Inspeções</Link>
           </div>
         </div>
 
@@ -318,12 +318,12 @@ function VeiculosList() {
   );
 }
 
+
+
 function InspecoesList() {
   const [inspecoes, setInspecoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mensagemErro, setMensagemErro] = useState(null);
-  const [deleteId, setDeleteId] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -349,10 +349,9 @@ function InspecoesList() {
     }
   };
 
-  if (loading) return <p>Carregando...</p>
+  if (loading) return <p>Carregando...</p>;
 
-  return
-  (
+  return (
     <>
       <div className="row">
         <div className="col-6">
@@ -375,7 +374,9 @@ function InspecoesList() {
         <thead>
           <tr>
             <th>Inspeção</th>
+            <th>Código Cliente</th>
             <th>Matrícula</th>
+            <th>Código Inspetor</th>
             <th>Data Inspeção</th>
             <th>Faltas</th>
             <th>Aprovado</th>
@@ -385,16 +386,20 @@ function InspecoesList() {
         <tbody>
           {inspecoes.map(inspecao => (
             <tr key={inspecao.codinspecao}>
+              <td>{inspecao.codinspecao}</td>
+              <td>{inspecao.codcli}</td>
               <td>{inspecao.codmatricula}</td>
+              <td>{inspecao.codinspetor}</td>
               <td>{inspecao.datainspecao}</td>
               <td>{inspecao.numerofaltas}</td>
+              <td>{inspecao.descricaofaltas}</td>
               <td>{inspecao.aprovado}</td>
 
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
               </td>
-              
+
             </tr>
           ))}
         </tbody>
