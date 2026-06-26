@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 
-const API_BASE = 'https://reimagined-tribble-4jjrjj5jrxw7357j6-3000.app.github.dev';
+const API_BASE = 'https://obscure-doodle-97vxxqq5px3w47-3000.app.github.dev';
 
 function App() {
   return (
@@ -29,6 +29,10 @@ function App() {
           <Route path="/clientes/create" element={<ClienteForm modo="create" />} />
           <Route path="/clientes/update/:id" element={<ClienteForm modo="update" />} />
           <Route path="/clientes/read/:id" element={<ClienteForm modo="read" />} />
+
+          <Route path="/veiculos/create" element={<VeiculoForm modo="create" />} />
+          <Route path="/veiculos/update/:id" element={<VeiculoForm modo="update" />} />
+          <Route path="/veiculos/read/:id" element={<VeiculoForm modo="read" />} />
 
           <Route path="/clientes" element={<ClientesList />} />
           <Route path="/veiculos" element={<VeiculosList />} />
@@ -196,6 +200,7 @@ function ClienteForm({ modo }) {
   const [formData, setFormData] = useState({ nome: '', morada: '', nif: '' });
   const [loading, setLoading] = useState(true);
   const [mensagemErro, setMensagemErro] = useState(null);
+
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -244,9 +249,11 @@ function ClienteForm({ modo }) {
   if (loading) return <p>Carregando...</p>;
 
   let title;
+
   if (modo === 'create') title = 'Novo Cliente';
   else if (modo === 'update') title = 'Editar Cliente #' + id;
   else title = 'Cliente #' + id;
+
   return (
     <form onSubmit={modo !== 'read' ? handleSubmit : undefined}>
       <h2>{title}</h2>
@@ -298,6 +305,155 @@ function ClienteForm({ modo }) {
         </>
       ) : (
         <button type="button" className="btn btn-secondary" onClick={() => navigate('/clientes')}>Voltar</button>
+      )}
+    </form>
+  );
+}
+
+function VeiculoForm({ modo }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ codmatricula: '', datalivrete: '', anofabrico: '', codcli: '', codmarca: '' });
+  const [loading, setLoading] = useState(true);
+  const [mensagemErro, setMensagemErro] = useState(null);
+  const [clientes, setClientes] = useState([]);
+  const [marcas, setMarcas] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, [id]);
+
+  const fetchData = async () => {
+    try {
+      if (id) {
+        const response1 = await fetch(`${API_BASE}/veiculos/${id}`);
+        const data1 = await response1.json();
+        if (data1.success) {
+          setFormData(data1.data);
+        } else {
+          setMensagemErro(data1.message);
+        }
+      }
+      const response2 = await fetch(`${API_BASE}/clientes`);
+      const data2 = await response2.json();
+      if (data2.success) {
+        setClientes(data2.data);
+      } else {
+        setMensagemErro(data2.message);
+      }
+    } catch {
+      setMensagemErro('Erro ao carregar dados');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const method = modo === 'update' ? 'PUT' : 'POST';
+      const url = modo === 'update' ? `${API_BASE}/veiculos/${id}` : `${API_BASE}/veiculos`;
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (data.success) {
+        if (modo === '/veiculos/update') {
+          navigate('/veiculos/update/' + id);
+        } else {
+          navigate('/veiculos');
+        }
+      } else {
+        setMensagemErro(data.message);
+      }
+    } catch {
+      setMensagemErro('Erro ao guardar o veiculo');
+    }
+  };
+  if (loading) return <p>Carregando...</p>;
+
+  let title;
+
+  if (modo === 'create') title = 'Novo Veiculo';
+  else if (modo === 'update') title = 'Editar Veiculo #' + id;
+  else title = 'Veiculo #' + id;
+
+  return (
+    <form onSubmit={modo !== 'read' ? handleSubmit : undefined}>
+      <h2>{title}</h2>
+      {mensagemErro && (
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          {mensagemErro}
+          <button type="button" className="close" onClick={() => setMensagemErro('')} aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      )}
+      <div className="row">
+        <div className="col-8">
+          <div className="form-group">
+            <label for="codmatricula">Código da Matrícula:</label>
+            <input type="text" className="form-control" value={formData.codmatricula} onChange={(e) => setFormData({
+              ...formData, codmatricula:
+
+                e.target.value
+            })} required readOnly={modo === 'read'} />
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-6">
+          <div className="form-group">
+            <label for="datalivrete">Data de Livrete:</label>
+            <input type="date" className="form-control" value={formData.datalivrete} onChange={(e) => setFormData({
+              ...formData, datalivrete:
+                e.target.value
+            })} required readOnly={modo === 'read'} />
+          </div>
+        </div>
+        <div className="col-6">
+          <div className="form-group">
+            <label>Ano Fabrico</label>
+            <input type="text" className="form-control" value={formData.anofabrico} onChange={(e) => setFormData({
+              ...formData, anofabrico:
+
+                e.target.value
+            })} required readOnly={modo === 'read'} />
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="form-group">
+          <label>Cliente</label>
+          <select className="form-control" value={formData.codcli} onChange={(e) => setFormData({
+            ...formData, codcli:
+              e.target.value
+          })} required disabled={modo === 'read'}>
+            <option value="">Selecione</option>
+            {veiculos.map(veiculo => <option key={veiculo.codcli} value={veiculo.codcli}>{veiculo.nome}</option>)}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Código da Marca</label>
+          <select className="form-control" value={formData.codmarca} onChange={(e) => setFormData({
+            ...formData, codmarca:
+              e.target.value
+          })} required disabled={modo === 'read'}>
+            <option value="">Selecione</option>
+            {veiculos.map(veiculo => <option key={veiculo.codmarca} value={veiculo.codmarca}>{veiculo.nome}</option>)}
+          </select>
+        </div>
+      </div>
+      {modo !== 'read' ? (
+        <>
+          <button type="submit" className="btn btn btn-dark mr-2">Guardar</button>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/veiculos')}>Cancelar</button>
+        </>
+      ) : (
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/veiculos')}>Voltar</button>
       )}
     </form>
   );
@@ -372,7 +528,7 @@ function VeiculosList() {
           <h2>Veiculos</h2>
         </div>
         <div className="col-6 text-right">
-          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Novo Veiculo</button>
+          <button className="btn btn-dark" onClick={() => navigate('/veiculos/create')}>Novo veiculo</button>
           <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
         </div>
       </div>
@@ -389,10 +545,10 @@ function VeiculosList() {
           <tr>
             <th>Veiculo</th>
             <th>Matrícula</th>
-            <th>Data Veículo</th>
+            <th>Data Livrete</th>
             <th>Ano Fabrico</th>
-            <th>Nome do Cliente</th>
-            <th>Marca</th>
+            <th>Código do Cliente</th>
+            <th>Código da Marca</th>
             <th>Opções</th>
           </tr>
         </thead>
@@ -403,8 +559,8 @@ function VeiculosList() {
               <td>{veiculo.codmatricula}</td>
               <td>{veiculo.datalivrete}</td>
               <td>{veiculo.anofabrico}</td>
-              <td>{veiculo.cliente.nome}</td>
-              <td>{veiculo.marca.marca}</td>
+              <td>{veiculo.codcli}</td>
+              <td>{veiculo.codmarca}</td>
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
