@@ -1,2 +1,3 @@
 # REACT-APP-IPO
-Aura
+Projeto em React
+
